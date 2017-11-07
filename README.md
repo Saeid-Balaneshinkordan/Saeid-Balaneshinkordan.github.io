@@ -1,1 +1,0 @@
-# Saeid-Balaneshinkordan.github.io
