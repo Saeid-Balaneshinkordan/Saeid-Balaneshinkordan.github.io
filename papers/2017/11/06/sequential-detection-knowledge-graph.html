@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Sequential Query Expansion using Concept Graph</title>
-  <meta name="description" content="paper: Sequential Query Expansion using Concept Graph (pdf)">
+  <meta name="description" content="paper: “Sequential Query Expansion using Concept Graph” (pdf)">
 
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="canonical" href="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html">
@@ -93,33 +93,84 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p><em>paper:  Sequential Query Expansion using Concept Graph <a href="http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-cikm16.pdf">(pdf)</a></em></p>
+    <p><em>paper:  “Sequential Query Expansion using Concept Graph” <a href="http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-cikm16.pdf">(pdf)</a></em></p>
 
 <h2 id="objectives">Objectives:</h2>
 
 <ul>
   <li>To discover <strong>effective latent concepts</strong> for query
-expansion from from manually and automatically constructed concept graphs (or semantic networks), in which the nodes correspond to words
+expansion from manually and automatically constructed concept graphs (or semantic networks), in which the nodes correspond to words
 or phrases and the typed edges designate semantic relationships between words and phrases.</li>
   <li>To leverage <strong>large and dense concept graphs</strong>, in which the number of candidate concepts that
 are related to query terms and phrases and need to be examined increases exponentially with the distance from the
 original query concepts.</li>
 </ul>
 
-<h3 id="example-concept-graph-for-query-poach-wildlife-preserve">Example: Concept Graph for Query <span style="color:#528712">“poach wildlife preserve”</span>:</h3>
+<h3 id="example-concept-graph-from-conceptnet5-for-the-query-poach-wildlife-preserve">Example: Concept Graph from ConceptNet5 for the Query <span style="color:#528712">“poach wildlife preserve”</span>:</h3>
 
 <p><img src="/assets/example.jpg" alt="Five Layers of Concept Graph" /></p>
+
+<ul>
+  <li>Total number of concept layers that should involved in the concept selection process: 4</li>
+  <li>Relationship layer 1:
+    <ul>
+      <li><strong>Number of examined concepts</strong>: 3</li>
+      <li><strong>Concepts should be Examined</strong> (all original concept in the query): “poach”, “wildlife”, “preserve”</li>
+      <li><strong>Concepts should be Selected</strong>: “poach”, “wildlife”, and “preserve”</li>
+      <li><em>For simplicity, only unigram concepts are shown for the first layer in this figure.</em></li>
+    </ul>
+  </li>
+  <li>Relationship layer 2:
+    <ul>
+      <li><strong>Number of examined concepts</strong>: 6</li>
+      <li><strong>Concepts should be Examined</strong> (all concept directly related to original concepts): “keep”, “boil”, “hunt”, “nature preserve”, “album”, and “injure”</li>
+      <li><strong>Concepts should be Selected</strong>: “hunt” and “nature preserve”</li>
+    </ul>
+  </li>
+  <li>Relationship layer 3:
+    <ul>
+      <li><strong>Number of examined concepts</strong>: 3</li>
+      <li><strong>Concepts should be Examined</strong> (all concept directly related to selected concepts at layer 1): “capture”, “wildlife sanctuary”, and “manage”</li>
+      <li><strong>Concepts should be Selected</strong>: “capture” and “wildlife sanctuary”</li>
+    </ul>
+  </li>
+  <li>Relationship layer 4:
+    <ul>
+      <li><strong>Number of examined concepts</strong>: 3</li>
+      <li><strong>Concepts should be Examined</strong> (all concept directly related to selected concepts at layer 2): “get”, “animal”, and “conserve”</li>
+      <li><strong>Concepts should be Selected</strong>: None</li>
+    </ul>
+  </li>
+</ul>
 
 <h2 id="optimization-problem">Optimization Problem:</h2>
 
 <ul>
   <li>
-    <p><strong>Objective Function:</strong> total number of <strong>evaluated</strong> concepts</p>
+    <p><strong>Objective:</strong> minimize number of <strong>examined</strong> concepts (and ultimately reduce the computation time)</p>
   </li>
   <li>
     <p><strong>Constraint:</strong>
 precision of retrieval results</p>
   </li>
+</ul>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+\min_{\color{#707B7C}{\text{set of candidate concepts}}}\quad&\bigg\{\sum_{\color{#707B7C}{i=1}}^{\color{#707B7C}{\text{Number of relationship layers}}}{\color{#707B7C}{\text{Number of examined concepts at layer } i}}\bigg\}\\
+\text{subject to:}\quad& \color{#707B7C}{\text{Retrieval evaluation metric }} > \color{#707B7C}{\text{ A pre-specified threshold}}
+\end{aligned} %]]></script>
+
+<h3 id="mathematical-formulation">Mathematical Formulation:</h3>
+<ul>
+  <li><script type="math/tex">k</script>: number of concept layers that are involved in the concept selection process</li>
+  <li><script type="math/tex">N_i</script>: number of examined concepts at relationship layer <script type="math/tex">i</script></li>
+  <li><script type="math/tex">\mathbb{\tilde R}_\Lambda</script>: set of document rankings</li>
+  <li><script type="math/tex">\mathbb{T}</script>: set of training data</li>
+  <li><script type="math/tex">{\rm E}(\mathbb{\tilde R}_\Lambda;\mathbb{T})</script> retrieval quality evaluation metric for a set of
+document rankings, <script type="math/tex">\mathbb{\tilde R}_\Lambda</script> , based on the training data <script type="math/tex">\mathbb{T}</script></li>
+  <li><script type="math/tex">\theta_Q</script>: a pre-specified lower threshold</li>
+  <li><script type="math/tex">\mathbb{\tilde C}_{k}^{ut}</script>: set of all candidate concepts for selection (including original concepts)</li>
 </ul>
 
 <script type="math/tex; mode=display">% <![CDATA[
@@ -162,6 +213,144 @@ precision of retrieval results</p>
 </table>
 
 <p><img src="/assets/s2.jpg" alt="Stage 2" /></p>
+
+<h3 id="parameter-optimization">Parameter Optimization:</h3>
+
+<ul>
+  <li><strong>Cross validation process:</strong> the following parameters are estimated:
+    <ul>
+      <li>upper and lower threshold <script type="math/tex">\beta_U</script> and <script type="math/tex">\beta_L</script> for each concept relationship layer and at the stage II (shown by blue and red lines in the following figure).</li>
+      <li>the weights of the features in stages I and II</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/SNOPC_stepII.jpg" alt="Stage 2 Thresholds" /></p>
+
+<ul>
+  <li><strong>Retrieval evaluation metric</strong>: Mean Average Precision (MAP) of the top retrieved documents
+    <ul>
+      <li>The goal in training is to keep MAP the threshold $\theta_Q$ (say 0.3), while the number of concepts examined in stage II is minimized.</li>
+    </ul>
+  </li>
+  <li><strong>Coordinate ascent method</strong>: Starting from an initial random point, the parameter space is examined in uniform steps (e.g., step size was $0.01$), one parameter at a time. This process is repeated for all parameters until convergence (if the change in the target retrieval metric from one iteration to another is less than $0.05$) or until the number of iterations exceeds $100$.</li>
+  <li><strong>The values of threshold $\theta_Q$</strong>: should be chosen depending on the collection and based on the MAP value that is usually obtained by the baseline methods for that collection. Too large values for the threshold $\theta_Q$ may not result in an acceptable performance. For example, the values of $\theta_Q$ for TREC 7-8, ROBUST04 and GOV collections can be set to $0.28$, $0.32$, and $0.30$, respectively, all of which are greater than the MAP of the Query Likelihood method by $0.08$.</li>
+</ul>
+
+<h3 id="features">Features:</h3>
+<p>For ConceptNet5, features used in the stages I and II are shown in the following table. All of the listed features are considered
+in the second stage, but only the features without <script type="math/tex">\star</script> sign (inexpensive features) are considered in the first stage.</p>
+
+<table class="mbtablestyleSimple">
+  <thead>
+    <tr>
+      <th>Feature</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>hgstDocScore</td>
+      <td>Retrieval score of the highest ranked document containing <script type="math/tex">C_{(i,j)}</script></td>
+    </tr>
+    <tr>
+      <td>avgDocScore</td>
+      <td>Average retrieval score of all documents containing <script type="math/tex">C_{(i,j)}</script></td>
+    </tr>
+    <tr>
+      <td>varDocScore</td>
+      <td>Variance of retrieval score of all documents containing <script type="math/tex">C_{(i,j)}</script></td>
+    </tr>
+    <tr>
+      <td>avgTDocScore</td>
+      <td>Average retrieval scores of the top documents containing <script type="math/tex">C_{(i,j)}</script></td>
+    </tr>
+    <tr>
+      <td>termFreqTpDoc</td>
+      <td>Number of occurrences of <script type="math/tex">C_{(i,j)}</script> in the top documents</td>
+    </tr>
+    <tr>
+      <td>docFreqTpDoc</td>
+      <td>Number of top documents containing <script type="math/tex">C_{(i,j)}</script></td>
+    </tr>
+    <tr>
+      <td>nodeDegree</td>
+      <td>Node degree of <script type="math/tex">C_{(i,j)}</script> in the concept graph</td>
+    </tr>
+    <tr>
+      <td>avgNumLinks</td>
+      <td>Average number of paths between <script type="math/tex">C_{(i,j)}</script> and query concepts</td>
+    </tr>
+    <tr>
+      <td>maxNumLinks</td>
+      <td>Maximum number of paths between <script type="math/tex">C_{(i,j)}</script> and query concepts</td>
+    </tr>
+    <tr>
+      <td>avgCooccur<script type="math/tex">\star</script></td>
+      <td>Average co-occurrence of <script type="math/tex">C_{(i,j)}</script> with query concepts</td>
+    </tr>
+    <tr>
+      <td>maxCooccur<script type="math/tex">\star</script></td>
+      <td>Maximum co-occurrence of <script type="math/tex">C_{(i,j)}</script> with query concepts</td>
+    </tr>
+    <tr>
+      <td>avgTCooccur</td>
+      <td>Average co-occurrence of <script type="math/tex">C_{(i,j)}</script> with query concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>maxTCooccur</td>
+      <td>Maximum co-occurrence of <script type="math/tex">C_{(i,j)}</script> with query concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>avgTCooccurP<script type="math/tex">\star</script></td>
+      <td>Average co-occurrence of <script type="math/tex">C_{(i,j)}</script> with at least a pair of query concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>maxTCooccurP<script type="math/tex">\star</script></td>
+      <td>Maximum co-occurrence of <script type="math/tex">C_{(i,j)}</script> with at least a pair of query concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>avgTCooccur<script type="math/tex">\star</script></td>
+      <td>Average co-occurrence of <script type="math/tex">C_{(i,j)}</script> with all previously selected concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>maxTCooccur<script type="math/tex">\star</script></td>
+      <td>Maximum co-occurrence of <script type="math/tex">C_{(i,j)}</script> with all previously selected concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>avgCooccurL<script type="math/tex">\star</script></td>
+      <td>Average co-occurrence of <script type="math/tex">C_{(i,j)}</script> with selected concepts in concept layer <script type="math/tex">i-1</script></td>
+    </tr>
+    <tr>
+      <td>maxCooccurL<script type="math/tex">\star</script></td>
+      <td>Maximum co-occurrence of <script type="math/tex">C_{(i,j)}</script> with selected concepts in concept layer <script type="math/tex">i-1</script></td>
+    </tr>
+    <tr>
+      <td>avgTCooccurL<script type="math/tex">\star</script></td>
+      <td>Average co-occurrence of <script type="math/tex">C_{(i,j)}</script> with selected concepts in concept layer <script type="math/tex">i-1</script> in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>maxTCooccurL<script type="math/tex">\star</script></td>
+      <td>Maximum co-occurrence of <script type="math/tex">C_{(i,j)}</script> with selected concepts in concept layer <script type="math/tex">i-1</script> in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>avgTMiP<script type="math/tex">\star</script></td>
+      <td>Average mutual information of <script type="math/tex">C_{(i,j)}</script> with at least a pair of query concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>maxTMiP<script type="math/tex">\star</script></td>
+      <td>Maximum mutual information of <script type="math/tex">C_{(i,j)}</script> with at least a pair of query concepts in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>avgTMiL<script type="math/tex">\star</script></td>
+      <td>Average mutual information of <script type="math/tex">C_{(i,j)}</script> with selected concepts in concept layer <script type="math/tex">i-1</script>  in top retrieved documents</td>
+    </tr>
+    <tr>
+      <td>maxTMiL<script type="math/tex">\star</script></td>
+      <td>Maximum mutual information of <script type="math/tex">C_{(i,j)}</script> with selected concepts in concept layer <script type="math/tex">i-1</script> in top retrieved documents</td>
+    </tr>
+  </tbody>
+</table>
 
   </div>
 
