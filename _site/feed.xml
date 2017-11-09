@@ -1,13 +1,69 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-11-07T16:58:50-05:00</updated><id>http://localhost:4000/</id><title type="html">Saeid Balaneshin blog</title><subtitle>A blog about what I have learned and continue to learn about computer science.</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/jekyll/update/2017/11/06/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2017-11-06T22:44:23-05:00</published><updated>2017-11-06T22:44:23-05:00</updated><id>http://localhost:4000/jekyll/update/2017/11/06/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2017/11/06/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-11-08T21:27:32-05:00</updated><id>http://localhost:4000/</id><title type="html">Saeid Balaneshin blog</title><subtitle>A blog about what I have learned and continue to learn about computer science.</subtitle><entry><title type="html">Sequential Query Expansion using Concept Graph</title><link href="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html" rel="alternate" type="text/html" title="Sequential Query Expansion using Concept Graph" /><published>2017-11-06T22:44:23-05:00</published><updated>2017-11-06T22:44:23-05:00</updated><id>http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph</id><content type="html" xml:base="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html">&lt;p&gt;&lt;em&gt;paper:  Sequential Query Expansion using Concept Graph &lt;a href=&quot;http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-cikm16.pdf&quot;&gt;(pdf)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+&lt;h2 id=&quot;objectives&quot;&gt;Objectives:&lt;/h2&gt;
 
-&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;To discover &lt;strong&gt;effective latent concepts&lt;/strong&gt; for query
+expansion from from manually and automatically constructed concept graphs (or semantic networks), in which the nodes correspond to words
+or phrases and the typed edges designate semantic relationships between words and phrases.&lt;/li&gt;
+  &lt;li&gt;To leverage &lt;strong&gt;large and dense concept graphs&lt;/strong&gt;, in which the number of candidate concepts that
+are related to query terms and phrases and need to be examined increases exponentially with the distance from the
+original query concepts.&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Tom'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;example-concept-graph-for-query-poach-wildlife-preserve&quot;&gt;Example: Concept Graph for Query &lt;span style=&quot;color:#528712&quot;&gt;“poach wildlife preserve”&lt;/span&gt;:&lt;/h3&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.</summary></entry></feed>
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/assets/example.jpg&quot; alt=&quot;Five Layers of Concept Graph&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;optimization-problem&quot;&gt;Optimization Problem:&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Objective Function:&lt;/strong&gt; total number of &lt;strong&gt;evaluated&lt;/strong&gt; concepts&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Constraint:&lt;/strong&gt;
+precision of retrieval results&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}
+\min_{\mathbb{\tilde C}_{k}^{ut}}\quad&amp;\bigg\{\sum_{i=1}^k{N_i}\bigg\}\\
+\text{s.t.}\quad&amp; {\rm E}(\mathbb{\tilde R}_\Lambda;\mathbb{T})&gt;\theta_Q
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;approximate-solution-sequential-concept-selection&quot;&gt;Approximate Solution (Sequential Concept Selection):&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;STEP I&lt;/strong&gt;: concepts are &lt;strong&gt;sorted&lt;/strong&gt; using computationally &lt;strong&gt;“inexpensive” features&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/assets/s1.jpg&quot; alt=&quot;Stage 1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;STEP II&lt;/strong&gt;: This sorting is utilized in the &lt;strong&gt;second stage&lt;/strong&gt; to sequentially &lt;strong&gt;select expansion concepts&lt;/strong&gt; by using computationally &lt;strong&gt;“expensive” features&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;table class=&quot;mbtablestyle&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Criterion&lt;/th&gt;
+      &lt;th&gt;Decision&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If &lt;script type=&quot;math/tex&quot;&gt;\tilde Q_r(C_{(i,j)})\ge\beta_U&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Select&lt;/strong&gt; concept &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and &lt;strong&gt;Continue&lt;/strong&gt; with the same concept layer&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+\beta_L\le {\tilde Q_r(C_{(i,j)})}&lt;\beta_U %]]&gt;&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Discard&lt;/strong&gt; concept &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and &lt;strong&gt;Continue&lt;/strong&gt; with the same concept layer&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+{\tilde Q_r(C_{(i,j)})}&lt;\beta_L %]]&gt;&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Discard&lt;/strong&gt; concept &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and &lt;strong&gt;Move&lt;/strong&gt; to the next concept layer&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/assets/s2.jpg&quot; alt=&quot;Stage 2&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><summary type="html">paper: Sequential Query Expansion using Concept Graph (pdf)</summary></entry></feed>

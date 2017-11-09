@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Welcome to Jekyll!</title>
-  <meta name="description" content="You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different wa...">
+  <title>Sequential Query Expansion using Concept Graph</title>
+  <meta name="description" content="paper: Sequential Query Expansion using Concept Graph (pdf)">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="http://localhost:4000/jekyll/update/2017/11/06/welcome-to-jekyll.html">
+  <link rel="canonical" href="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html">
   <link rel="alternate" type="application/rss+xml" title="Saeid Balaneshin blog" href="/feed.xml">
   
   
@@ -70,7 +70,7 @@
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">Welcome to Jekyll!</h1>
+    <h1 class="post-title" itemprop="name headline">Sequential Query Expansion using Concept Graph</h1>
     <p class="post-meta">
       <time datetime="2017-11-06T22:44:23-05:00" itemprop="datePublished">
         
@@ -79,21 +79,79 @@
       </p>
   </header>
 
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+
   <div class="post-content" itemprop="articleBody">
-    <p>You’ll find this post in your <code class="highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
+    <p><em>paper:  Sequential Query Expansion using Concept Graph <a href="http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-cikm16.pdf">(pdf)</a></em></p>
 
-<p>To add new posts, simply add a file in the <code class="highlighter-rouge">_posts</code> directory that follows the convention <code class="highlighter-rouge">YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
+<h2 id="objectives">Objectives:</h2>
 
-<p>Jekyll also offers powerful support for code snippets:</p>
+<ul>
+  <li>To discover <strong>effective latent concepts</strong> for query
+expansion from from manually and automatically constructed concept graphs (or semantic networks), in which the nodes correspond to words
+or phrases and the typed edges designate semantic relationships between words and phrases.</li>
+  <li>To leverage <strong>large and dense concept graphs</strong>, in which the number of candidate concepts that
+are related to query terms and phrases and need to be examined increases exponentially with the distance from the
+original query concepts.</li>
+</ul>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
-<span class="k">end</span>
-<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
-<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span></code></pre></figure>
+<h3 id="example-concept-graph-for-query-poach-wildlife-preserve">Example: Concept Graph for Query <span style="color:#528712">“poach wildlife preserve”</span>:</h3>
 
-<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>
+<p><img src="http://localhost:4000/assets/example.jpg" alt="Five Layers of Concept Graph" /></p>
 
+<h2 id="optimization-problem">Optimization Problem:</h2>
+
+<ul>
+  <li>
+    <p><strong>Objective Function:</strong> total number of <strong>evaluated</strong> concepts</p>
+  </li>
+  <li>
+    <p><strong>Constraint:</strong>
+precision of retrieval results</p>
+  </li>
+</ul>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{aligned}
+\min_{\mathbb{\tilde C}_{k}^{ut}}\quad&\bigg\{\sum_{i=1}^k{N_i}\bigg\}\\
+\text{s.t.}\quad& {\rm E}(\mathbb{\tilde R}_\Lambda;\mathbb{T})>\theta_Q
+\end{aligned} %]]></script>
+
+<h3 id="approximate-solution-sequential-concept-selection">Approximate Solution (Sequential Concept Selection):</h3>
+
+<p><strong>STEP I</strong>: concepts are <strong>sorted</strong> using computationally <strong>“inexpensive” features</strong>:</p>
+
+<p><img src="http://localhost:4000/assets/s1.jpg" alt="Stage 1" /></p>
+
+<p><strong>STEP II</strong>: This sorting is utilized in the <strong>second stage</strong> to sequentially <strong>select expansion concepts</strong> by using computationally <strong>“expensive” features</strong>:</p>
+
+<table class="mbtablestyle">
+  <thead>
+    <tr>
+      <th>Criterion</th>
+      <th>Decision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>If <script type="math/tex">\tilde Q_r(C_{(i,j)})\ge\beta_U</script></td>
+      <td><strong>Select</strong> concept <script type="math/tex">C_{(i,j)}</script> and <strong>Continue</strong> with the same concept layer</td>
+    </tr>
+    <tr>
+      <td>If <script type="math/tex">% <![CDATA[
+\beta_L\le {\tilde Q_r(C_{(i,j)})}<\beta_U %]]></script></td>
+      <td><strong>Discard</strong> concept <script type="math/tex">C_{(i,j)}</script> and <strong>Continue</strong> with the same concept layer</td>
+    </tr>
+    <tr>
+      <td>If <script type="math/tex">% <![CDATA[
+{\tilde Q_r(C_{(i,j)})}<\beta_L %]]></script></td>
+      <td><strong>Discard</strong> concept <script type="math/tex">C_{(i,j)}</script> and <strong>Move</strong> to the next concept layer</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="http://localhost:4000/assets/s2.jpg" alt="Stage 2" /></p>
 
   </div>
 

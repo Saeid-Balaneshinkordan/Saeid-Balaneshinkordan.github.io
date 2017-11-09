@@ -56,6 +56,13 @@ pre > code { border: 0; padding-right: 0; padding-left: 0; }
 .social-media-list .icon { padding-right: 5px; }
 .social-media-list li + li { padding-top: 5px; }
 
+.mbtablestyle { margin-bottom: 2rem; display: table; width: 100%; }
+.mbtablestyle table { display: table-cell; text-align: center; vertical-align: middle; width: 100%; border: 1px solid #e5e5e5; border-collapse: collapse; }
+.mbtablestyle td, .mbtablestyle th { padding: .25rem .5rem; border: 1px solid black; }
+.mbtablestyle tbody tr:nth-child(1) td { background-color: #00ff55; border: 1px solid black; }
+.mbtablestyle tbody tr:nth-child(2) td { background-color: #5964ff; border: 1px solid black; }
+.mbtablestyle tbody tr:nth-child(3) td { background-color: #ff0000; border: 1px solid black; }
+
 /** Site header */
 .site-header { border-top: 5px solid #424242; border-bottom: 1px solid #e8e8e8; min-height: 55.95px; position: relative; }
 

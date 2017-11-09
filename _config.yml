@@ -24,6 +24,13 @@ github_username:  balaneshin
 
 # Build settings
 markdown:         kramdown
+highlighter: rouge
+
+kramdown:
+   input: GFM
+   hard_wrap: false
+   # syntax_highlighter: rouge
+
 theme:            minima
 plugins:
   - jekyll-feed
