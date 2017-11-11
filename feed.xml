@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-11-09T17:34:44-05:00</updated><id>http://localhost:4000/</id><title type="html">Saeid Balaneshin blog</title><subtitle>A blog about what I have learned and continue to learn about computer science.</subtitle><entry><title type="html">Sequential Query Expansion using Concept Graph</title><link href="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html" rel="alternate" type="text/html" title="Sequential Query Expansion using Concept Graph" /><published>2017-11-06T22:44:23-05:00</published><updated>2017-11-06T22:44:23-05:00</updated><id>http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph</id><content type="html" xml:base="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html">&lt;p&gt;&lt;em&gt;paper:  “Sequential Query Expansion using Concept Graph” &lt;a href=&quot;http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-cikm16.pdf&quot;&gt;(pdf)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;objectives&quot;&gt;Objectives:&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;To discover &lt;strong&gt;effective latent concepts&lt;/strong&gt; for query
+expansion from manually and automatically constructed concept graphs (or semantic networks), in which the nodes correspond to words
+or phrases and the typed edges designate semantic relationships between words and phrases.&lt;/li&gt;
+  &lt;li&gt;To leverage &lt;strong&gt;large and dense concept graphs&lt;/strong&gt;, in which the number of candidate concepts that
+are related to query terms and phrases and need to be examined increases exponentially with the distance from the
+original query concepts.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;example-concept-graph-from-conceptnet5-for-the-query-poach-wildlife-preserve&quot;&gt;Example: Concept Graph from ConceptNet5 for the Query &lt;span style=&quot;color:#528712&quot;&gt;“poach wildlife preserve”&lt;/span&gt;:&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/example.jpg&quot; alt=&quot;Five Layers of Concept Graph&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Total number of concept layers that should involved in the concept selection process: 4&lt;/li&gt;
+  &lt;li&gt;Relationship layer 1:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Number of examined concepts&lt;/strong&gt;: 3&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Examined&lt;/strong&gt; (all original concept in the query): “poach”, “wildlife”, “preserve”&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Selected&lt;/strong&gt;: “poach”, “wildlife”, and “preserve”&lt;/li&gt;
+      &lt;li&gt;&lt;em&gt;For simplicity, only unigram concepts are shown for the first layer in this figure.&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Relationship layer 2:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Number of examined concepts&lt;/strong&gt;: 6&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Examined&lt;/strong&gt; (all concept directly related to original concepts): “keep”, “boil”, “hunt”, “nature preserve”, “album”, and “injure”&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Selected&lt;/strong&gt;: “hunt” and “nature preserve”&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Relationship layer 3:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Number of examined concepts&lt;/strong&gt;: 3&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Examined&lt;/strong&gt; (all concept directly related to selected concepts at layer 1): “capture”, “wildlife sanctuary”, and “manage”&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Selected&lt;/strong&gt;: “capture” and “wildlife sanctuary”&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Relationship layer 4:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Number of examined concepts&lt;/strong&gt;: 3&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Examined&lt;/strong&gt; (all concept directly related to selected concepts at layer 2): “get”, “animal”, and “conserve”&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Concepts should be Selected&lt;/strong&gt;: None&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;optimization-problem&quot;&gt;Optimization Problem:&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Objective:&lt;/strong&gt; minimize number of &lt;strong&gt;examined&lt;/strong&gt; concepts (and ultimately reduce the computation time)&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Constraint:&lt;/strong&gt;
+precision of retrieval results&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}
+\min_{\color{#707B7C}{\text{set of candidate concepts}}}\quad&amp;\bigg\{\sum_{\color{#707B7C}{i=1}}^{\color{#707B7C}{\text{Number of relationship layers}}}{\color{#707B7C}{\text{Number of examined concepts at layer } i}}\bigg\}\\
+\text{subject to:}\quad&amp; \color{#707B7C}{\text{Retrieval evaluation metric }} &gt; \color{#707B7C}{\text{ A pre-specified threshold}}
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;mathematical-formulation&quot;&gt;Mathematical Formulation:&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;: number of concept layers that are involved in the concept selection process&lt;/li&gt;
+  &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;N_i&lt;/script&gt;: number of examined concepts at relationship layer &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;\mathbb{\tilde R}_\Lambda&lt;/script&gt;: set of document rankings&lt;/li&gt;
+  &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;\mathbb{T}&lt;/script&gt;: set of training data&lt;/li&gt;
+  &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;{\rm E}(\mathbb{\tilde R}_\Lambda;\mathbb{T})&lt;/script&gt; retrieval quality evaluation metric for a set of
+document rankings, &lt;script type=&quot;math/tex&quot;&gt;\mathbb{\tilde R}_\Lambda&lt;/script&gt; , based on the training data &lt;script type=&quot;math/tex&quot;&gt;\mathbb{T}&lt;/script&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;\theta_Q&lt;/script&gt;: a pre-specified lower threshold&lt;/li&gt;
+  &lt;li&gt;&lt;script type=&quot;math/tex&quot;&gt;\mathbb{\tilde C}_{k}^{ut}&lt;/script&gt;: set of all candidate concepts for selection (including original concepts)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{aligned}
+\min_{\mathbb{\tilde C}_{k}^{ut}}\quad&amp;\bigg\{\sum_{i=1}^k{N_i}\bigg\}\\
+\text{s.t.}\quad&amp; {\rm E}(\mathbb{\tilde R}_\Lambda;\mathbb{T})&gt;\theta_Q
+\end{aligned} %]]&gt;&lt;/script&gt;
+
+&lt;h3 id=&quot;approximate-solution-sequential-concept-selection&quot;&gt;Approximate Solution (Sequential Concept Selection):&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;STEP I&lt;/strong&gt;: concepts are &lt;strong&gt;sorted&lt;/strong&gt; using computationally &lt;strong&gt;“inexpensive” features&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/s1.jpg&quot; alt=&quot;Stage 1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;STEP II&lt;/strong&gt;: This sorting is utilized in the &lt;strong&gt;second stage&lt;/strong&gt; to sequentially &lt;strong&gt;select expansion concepts&lt;/strong&gt; by using computationally &lt;strong&gt;“expensive” features&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;table class=&quot;mbtablestyle&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Criterion&lt;/th&gt;
+      &lt;th&gt;Decision&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If &lt;script type=&quot;math/tex&quot;&gt;\tilde Q_r(C_{(i,j)})\ge\beta_U&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Select&lt;/strong&gt; concept &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and &lt;strong&gt;Continue&lt;/strong&gt; with the same concept layer&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+\beta_L\le {\tilde Q_r(C_{(i,j)})}&lt;\beta_U %]]&gt;&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Discard&lt;/strong&gt; concept &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and &lt;strong&gt;Continue&lt;/strong&gt; with the same concept layer&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;If &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+{\tilde Q_r(C_{(i,j)})}&lt;\beta_L %]]&gt;&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Discard&lt;/strong&gt; concept &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and &lt;strong&gt;Move&lt;/strong&gt; to the next concept layer&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/s2.jpg&quot; alt=&quot;Stage 2&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;parameter-optimization&quot;&gt;Parameter Optimization:&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Cross validation process:&lt;/strong&gt; the following parameters are estimated:
+    &lt;ul&gt;
+      &lt;li&gt;upper and lower threshold &lt;script type=&quot;math/tex&quot;&gt;\beta_U&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;\beta_L&lt;/script&gt; for each concept relationship layer and at the stage II (shown by blue and red lines in the following figure).&lt;/li&gt;
+      &lt;li&gt;the weights of the features in stages I and II&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/SNOPC_stepII.jpg&quot; alt=&quot;Stage 2 Thresholds&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Retrieval evaluation metric&lt;/strong&gt;: Mean Average Precision (MAP) of the top retrieved documents
+    &lt;ul&gt;
+      &lt;li&gt;The goal in training is to keep MAP the threshold $\theta_Q$ (say 0.3), while the number of concepts examined in stage II is minimized.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Coordinate ascent method&lt;/strong&gt;: Starting from an initial random point, the parameter space is examined in uniform steps (e.g., step size was $0.01$), one parameter at a time. This process is repeated for all parameters until convergence (if the change in the target retrieval metric from one iteration to another is less than $0.05$) or until the number of iterations exceeds $100$.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;The values of threshold $\theta_Q$&lt;/strong&gt;: should be chosen depending on the collection and based on the MAP value that is usually obtained by the baseline methods for that collection. Too large values for the threshold $\theta_Q$ may not result in an acceptable performance. For example, the values of $\theta_Q$ for TREC 7-8, ROBUST04 and GOV collections can be set to $0.28$, $0.32$, and $0.30$, respectively, all of which are greater than the MAP of the Query Likelihood method by $0.08$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;features&quot;&gt;Features:&lt;/h3&gt;
+&lt;p&gt;For ConceptNet5, features used in the stages I and II are shown in the following table. All of the listed features are considered
+in the second stage, but only the features without &lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt; sign (inexpensive features) are considered in the first stage.&lt;/p&gt;
+
+&lt;table class=&quot;mbtablestyleSimple&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Feature&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;hgstDocScore&lt;/td&gt;
+      &lt;td&gt;Retrieval score of the highest ranked document containing &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgDocScore&lt;/td&gt;
+      &lt;td&gt;Average retrieval score of all documents containing &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;varDocScore&lt;/td&gt;
+      &lt;td&gt;Variance of retrieval score of all documents containing &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgTDocScore&lt;/td&gt;
+      &lt;td&gt;Average retrieval scores of the top documents containing &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;termFreqTpDoc&lt;/td&gt;
+      &lt;td&gt;Number of occurrences of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; in the top documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;docFreqTpDoc&lt;/td&gt;
+      &lt;td&gt;Number of top documents containing &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;nodeDegree&lt;/td&gt;
+      &lt;td&gt;Node degree of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; in the concept graph&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgNumLinks&lt;/td&gt;
+      &lt;td&gt;Average number of paths between &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and query concepts&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxNumLinks&lt;/td&gt;
+      &lt;td&gt;Maximum number of paths between &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; and query concepts&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgCooccur&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Average co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with query concepts&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxCooccur&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Maximum co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with query concepts&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgTCooccur&lt;/td&gt;
+      &lt;td&gt;Average co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with query concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxTCooccur&lt;/td&gt;
+      &lt;td&gt;Maximum co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with query concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgTCooccurP&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Average co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with at least a pair of query concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxTCooccurP&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Maximum co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with at least a pair of query concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgTCooccur&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Average co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with all previously selected concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxTCooccur&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Maximum co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with all previously selected concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgCooccurL&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Average co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with selected concepts in concept layer &lt;script type=&quot;math/tex&quot;&gt;i-1&lt;/script&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxCooccurL&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Maximum co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with selected concepts in concept layer &lt;script type=&quot;math/tex&quot;&gt;i-1&lt;/script&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgTCooccurL&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Average co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with selected concepts in concept layer &lt;script type=&quot;math/tex&quot;&gt;i-1&lt;/script&gt; in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxTCooccurL&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Maximum co-occurrence of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with selected concepts in concept layer &lt;script type=&quot;math/tex&quot;&gt;i-1&lt;/script&gt; in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgTMiP&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Average mutual information of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with at least a pair of query concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxTMiP&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Maximum mutual information of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with at least a pair of query concepts in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;avgTMiL&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Average mutual information of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with selected concepts in concept layer &lt;script type=&quot;math/tex&quot;&gt;i-1&lt;/script&gt;  in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;maxTMiL&lt;script type=&quot;math/tex&quot;&gt;\star&lt;/script&gt;&lt;/td&gt;
+      &lt;td&gt;Maximum mutual information of &lt;script type=&quot;math/tex&quot;&gt;C_{(i,j)}&lt;/script&gt; with selected concepts in concept layer &lt;script type=&quot;math/tex&quot;&gt;i-1&lt;/script&gt; in top retrieved documents&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</content><author><name></name></author><summary type="html">paper: “Sequential Query Expansion using Concept Graph” (pdf)</summary></entry></feed>
