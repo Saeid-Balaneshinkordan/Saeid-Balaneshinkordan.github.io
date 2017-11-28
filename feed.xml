@@ -1,4 +1,84 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-11-15T13:11:27-05:00</updated><id>http://localhost:4000/</id><title type="html">Saeid Balaneshin blog</title><subtitle>A blog about what I have learned and continue to learn about computer science.</subtitle><entry><title type="html">Sequential Query Expansion using Concept Graph</title><link href="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html" rel="alternate" type="text/html" title="Sequential Query Expansion using Concept Graph" /><published>2017-11-06T22:44:23-05:00</published><updated>2017-11-06T22:44:23-05:00</updated><id>http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph</id><content type="html" xml:base="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html">&lt;p&gt;&lt;em&gt;paper:  “Sequential Query Expansion using Concept Graph” &lt;a href=&quot;http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-cikm16.pdf&quot;&gt;(pdf)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-11-28T16:15:21-05:00</updated><id>http://localhost:4000/</id><title type="html">Saeid Balaneshin blog</title><subtitle>A blog about what I have learned and continue to learn about computer science.</subtitle><entry><title type="html">Optimization Method for Weighting Explicit and Latent Concepts in Clinical Decision Support Queries</title><link href="http://localhost:4000/papers/2017/11/28/Optimization-CDS.html" rel="alternate" type="text/html" title="Optimization Method for Weighting Explicit and Latent Concepts in Clinical Decision Support Queries" /><published>2017-11-28T14:22:00-05:00</published><updated>2017-11-28T14:22:00-05:00</updated><id>http://localhost:4000/papers/2017/11/28/Optimization-CDS</id><content type="html" xml:base="http://localhost:4000/papers/2017/11/28/Optimization-CDS.html">&lt;p&gt;&lt;em&gt;paper:  “Optimization Method for Weighting Explicit and Latent Concepts in Clinical Decision Support Queries” &lt;a href=&quot;http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-ictir16-full.pdf&quot;&gt;(pdf)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction:&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Information retrieval component that can take a query describing a &lt;strong&gt;patient case&lt;/strong&gt; and &lt;strong&gt;find articles&lt;/strong&gt; in collections of biomedical literature, which are relevant to the given case, is an important part of clinical decision support systems.&lt;/li&gt;
+  &lt;li&gt;Accurately answering &lt;strong&gt;case-based queries&lt;/strong&gt; requires such as queries in medical domain capturing many explicit and latent aspects of complex information needs underlying such queries.&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Explicit medical concepts&lt;/em&gt; are found in the &lt;strong&gt;query&lt;/strong&gt; itself, while &lt;em&gt;latent concepts&lt;/em&gt; can be obtained from &lt;strong&gt;top-retrieved documents and medical knowledge bases&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;example-of-cds-queries&quot;&gt;Example of CDS Queries:&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Query&lt;/strong&gt;: 26-year-old &lt;em&gt;obese woman&lt;/em&gt; with &lt;em&gt;bipolar disorder&lt;/em&gt;, on &lt;em&gt;zolpidem&lt;/em&gt; and &lt;em&gt;lithium&lt;/em&gt;, with recent &lt;em&gt;difficulty sleeping&lt;/em&gt;, &lt;em&gt;agitation&lt;/em&gt;, &lt;em&gt;suicidal ideation&lt;/em&gt;, and &lt;em&gt;irritability&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Explicit concepts&lt;/strong&gt;: “obesity”, “woman”, “biopolar disorder”, “Zolpidem”, and “agitation”.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Latent concepts&lt;/strong&gt;: “psychotic depression”, “manic disorder”, “dyssomnia”, and “restlessness”.&lt;/p&gt;
+
+&lt;h3 id=&quot;example-of-cds-queries-structure&quot;&gt;Example of CDS Queries’ Structure:&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/intgr-cds/queries.jpg&quot; alt=&quot;Structure&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;objective&quot;&gt;Objective:&lt;/h2&gt;
+&lt;p&gt;Develop an intelligent retrieval system that combines query analysis and expansion by jointly determining the importance weights of explicit and latent query concepts depending on their type and source&lt;/p&gt;
+
+&lt;h2 id=&quot;challenges&quot;&gt;Challenges:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;How to identify all effective latent concepts in noisy top retrieved documents and dense knowledge graphs?&lt;/li&gt;
+  &lt;li&gt;How to determine the relative importance of unigram, bigram, and multi-term explicit and latent concepts that are extracted from the query itself and top documents retrieved based on a given query as well as the ones that are found in medical knowledge bases?&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;concept-sources-and-their-types&quot;&gt;Concept Sources and their Types:&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/intgr-cds/concepts.jpg&quot; alt=&quot;Concepts&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;features-that-can-be-used-to-weigh-explicit-and-implicit-a-concept-c&quot;&gt;Features that can be used to weigh explicit and implicit a concept c:&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;TF-IDF of concept c in the collection&lt;/li&gt;
+  &lt;li&gt;Average collection co-occurrence of concept c with other concepts in the query&lt;/li&gt;
+  &lt;li&gt;Maximum collection co-occurrence of concept c with other concepts in the query&lt;/li&gt;
+  &lt;li&gt;Number of top retrieved documents containing concept&lt;/li&gt;
+  &lt;li&gt;Sum of retrieval scores of top-ranked documents containing concept c&lt;/li&gt;
+  &lt;li&gt;Maximum co-occurrence of concept c with other query concepts in top retrieved documents&lt;/li&gt;
+  &lt;li&gt;Average co-occurrence of concept c with other query concepts in top retrieved documents&lt;/li&gt;
+  &lt;li&gt;Do infoboxes of Wikipedia articles corresponding to concept c contain any health-related keywords?&lt;/li&gt;
+  &lt;li&gt;Does any of the terms of concept c exist in the title of any Wikipedia health-related articles?&lt;/li&gt;
+  &lt;li&gt;Average distance between concept c in the UMLS concept graph and other query, top document and related UMLS concepts identified for a query&lt;/li&gt;
+  &lt;li&gt;Popularity (or node degree) of concept c in the UMLS concept graph&lt;/li&gt;
+  &lt;li&gt;Direction of concept c with respect to query concepts in the UMLS semantic network&lt;/li&gt;
+  &lt;li&gt;Does concept c have a UMLS semantic type that is effective for medical query expansion?&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;objective-function&quot;&gt;Objective Function:&lt;/h2&gt;
+
+&lt;p&gt;The Objective Function to find the weights of concepts can be nonconvex:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/intgr-cds/obj-fun.jpg&quot; alt=&quot;Objective Function&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;graduated-optimization-method&quot;&gt;Graduated Optimization Method:&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Graduated_optimization&quot;&gt;Graduated optimization&lt;/a&gt; is an iterative optimization method.&lt;/li&gt;
+  &lt;li&gt;It gradually finds the global optimum of a given objective function by finding the optima for a series of simplified objective functions.&lt;/li&gt;
+  &lt;li&gt;Each of these simplified objective functions is obtained from the original objective function by applying different degree of smoothing to make the original function more convex.&lt;/li&gt;
+  &lt;li&gt;It starts from the solution to the most simplified optimization problem (i.e., when the maximum degree of smoothing is applied to the original objective function) and considers this solution as the starting point for the second less simplified problem (i.e. less smoothed original objective function).&lt;/li&gt;
+  &lt;li&gt;This process continues until the global optimum for the original objective function is found. This procedure is based on the assumption that the global optimum of a given objective function at the current iteration is close enough to its global optimum at the next iteration. Therefore, at the next iteration, the region of the parameter space that is far enough from the optimum point at the current iteration is ignored. As a result, a smaller region that is close to the optimum point at the current iteration is searched for the optimal parameter setting at the next iteration.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;First Iteration&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Second Iteration&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Third Iteration&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;/assets/intgr-cds/s1.jpg&quot; alt=&quot;&quot; /&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;/assets/intgr-cds/s2.jpg&quot; alt=&quot;&quot; /&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;/assets/intgr-cds/s3.jpg&quot; alt=&quot;&quot; /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</content><author><name></name></author><summary type="html">paper: “Optimization Method for Weighting Explicit and Latent Concepts in Clinical Decision Support Queries” (pdf)</summary></entry><entry><title type="html">Sequential Query Expansion using Concept Graph</title><link href="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html" rel="alternate" type="text/html" title="Sequential Query Expansion using Concept Graph" /><published>2017-11-06T22:44:23-05:00</published><updated>2017-11-06T22:44:23-05:00</updated><id>http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph</id><content type="html" xml:base="http://localhost:4000/papers/2017/11/06/sequential-detection-knowledge-graph.html">&lt;p&gt;&lt;em&gt;paper:  “Sequential Query Expansion using Concept Graph” &lt;a href=&quot;http://www.cs.wayne.edu/kotov/docs/balaneshinkordan-cikm16.pdf&quot;&gt;(pdf)&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;objectives&quot;&gt;Objectives:&lt;/h2&gt;
 
